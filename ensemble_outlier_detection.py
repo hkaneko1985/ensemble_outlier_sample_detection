@@ -42,9 +42,13 @@ for iteration_number in range(max_iteration_number):
         selected_x = normal_x.iloc[selected_sample_numbers, :]
         selected_y = normal_y.iloc[selected_sample_numbers]
         unique_number, unique_index = np.unique(selected_sample_numbers, return_index=True)
+        # 標準偏差が 0 の説明変数を削除
+        std_0_variable_flags = selected_x.std() == 0
+        new_selected_x = selected_x.drop(selected_x.columns[std_0_variable_flags], axis=1)
+        new_x = x.drop(x.columns[std_0_variable_flags], axis=1)
         # オートスケーリング
-        selected_autoscaled_x = (selected_x - selected_x.mean()) / selected_x.std()
-        autoscaled_x = (x - selected_x.mean()) / selected_x.std()
+        selected_autoscaled_x = (new_selected_x - new_selected_x.mean()) / new_selected_x.std()
+        autoscaled_x = (new_x - new_selected_x.mean()) / new_selected_x.std()
         selected_autoscaled_y = (selected_y - selected_y.mean()) / selected_y.std()
         
         if method_name == 'pls':
